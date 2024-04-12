@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./db
+    networks:
+      - dnet
+
+  back:
+    build:
+      context: ./back
+    networks:
+      - dnet
+    volumes:
+      - ./back:/app
+    environment:
+      - DB_HOST=db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  front:
+    build:
+      context: ./front
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/usr/src/app
+
+networks:
+  dnet:
+    driver: bridge
+
+
