@@ -1,16 +1,25 @@
 #!/bin/bash
 
-docker compose up -d
-docker compose run --rm back alembic upgrade head
-docker compose run --rm back alembic revision --autogenerate
+cd db
+docker build -t db_img .
+docker run -d --name db_cont -p 5432:5432 db_img
+docker network create dnet
+docker network connect dnet db_cont
 
-# docker destop:
-# --> ejecuta (docker-compose)
-# enfoque: para PC con capacidad media de hardware
-# explicacion: descargar docker y despues docker compose, tenemos 2 opciones con docker compose, directamente desde la imagen de desktop windows installa docker compose y puede ser ejecutado con el comando docker-compose
 
-# docker compose plugin:
-# --> ejecuta (docker compose)
-# enfoque: para PC con poca capacidad de hardware
-# si no tienen docker desktop instalado deberan instalar docker compose plugin desde esta documentacion:
-# https://docs.docker.com/compose/install/linux/
+cd ../back
+docker build -t back_img .
+docker run -d --name back_cont -p 8000:8000 -e DB_HOST=db_cont -v "$PWD:/app" back_img
+docker network connect dnet back_cont
+
+docker stop back_cont
+docker start back_cont
+
+docker exec -it back_cont alembic upgrade head
+docker exec -it back_cont alembic revision --autogenerate
+
+cd ../front
+docker build -t front_img .
+docker run -d --name front_cont -p 3000:3000 -v "$PWD:/usr/src/app" front_img
+docker stop front_cont
+docker start front_cont
