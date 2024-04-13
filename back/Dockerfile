@@ -13,9 +13,7 @@ COPY . .
 
 #RUN alembic revision --autogenerate -m "Initial migration trough docker file in FastAPI"
 
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "$PORT"]
 
 
 #docker build -t back_img .
