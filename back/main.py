@@ -20,7 +20,8 @@ app.include_router(api_router)
 origins = [
     "http://"+config('HOST_FRONT')+":3000",
     "https://create-react-app-site-production-def0.up.railway.app",
-    "https://react-front-refoenergy-production.up.railway.app"
+    "https://react-front-refoenergy-production.up.railway.app",
+    "https://docker-railway-production.up.railway.app/"
 ]
 
 # Configure CORS
